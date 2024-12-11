@@ -1,13 +1,14 @@
 ﻿using BackEnd_Task.Models;
+using Core.ViewModels;
 using FluentValidation;
 
 namespace Service.Validations
 {
-    public class UserValidation:AbstractValidator<User>
+    public class UserValidation:AbstractValidator<RegisterModel>
     {
         public UserValidation()
         {
-            RuleFor(user => user.Username)
+            RuleFor(user => user.UserName)
             .NotEmpty().WithMessage("Username alanı boş olamaz.") 
             .MinimumLength(3).WithMessage("Username en az 3 karakter uzunluğunda olmalıdır.") 
             .MaximumLength(50).WithMessage("Username en fazla 50 karakter uzunluğunda olabilir."); 
