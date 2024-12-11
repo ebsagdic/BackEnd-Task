@@ -1,4 +1,5 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using Core.Repositories;
 using Core.Services;
 using Core.UnitOfWork;
@@ -18,59 +19,17 @@ namespace Service
             _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<Category> AddAsync(Category entity)
+        public async Task<Response<Category>> AddAsync(Category category)
         {
-            await _categoryRepository.AddAsync(entity);
+            await _categoryRepository.AddAsync(category);
             await _unitOfWork.CommitAsync();
-            return entity;
+            return Response<Category>.Success(category, 200);
         }
 
-        public async Task AddRangeAsync(IEnumerable<Category> entities)
+        public async Task<Response<IEnumerable<Category>>> GetAllAsync()
         {
-            var dataList = entities.ToList();
-            await _categoryRepository.AddRangeAsync(entities);
-            await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<bool> AnyAsync(Expression<Func<Category, bool>> expression)
-        {
-            return await _categoryRepository.AnyAsync(expression);
-        }
-
-        public async Task<IEnumerable<Category>> GetAllAsync()
-        {
-            return await _categoryRepository.GetAll().ToListAsync();
-        }
-
-        public async Task<Category> GetByIdAsync(int id)
-        {
-            var product = await _categoryRepository.GetByIdAsync(id);
-            if (product == null)
-            {
-                throw new NotFoundException($"{typeof(Category).Name} not found");
-            }
-            return product;
-        }
-
-        public void RemoveAsync(Category entity)
-        {
-            _categoryRepository.Remove(entity);
-
-        }
-
-        public void RemoveRangeAsync(IEnumerable<Category> entities)
-        {
-            _categoryRepository.RemoveRange(entities);
-        }
-
-        public void UpdateAsync(Category entity)
-        {
-            _categoryRepository.Update(entity);
-        }
-
-        public IQueryable<Category> Where(Expression<Func<Category, bool>> expression)
-        {
-            return _categoryRepository.Where(expression);
+            var category = await _categoryRepository.GetAllAsync();
+            return Response<IEnumerable<Category>>.Success(category.Data, 200);
         }
     }
 }

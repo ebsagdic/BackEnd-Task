@@ -1,4 +1,5 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,7 @@ namespace Core.Services
 {
     public interface ICategoryService
     {
-        Task<Category> GetByIdAsync(int id);
-        Task<IEnumerable<Category>> GetAllAsync();
-        IQueryable<Category> Where(Expression<Func<Category, bool>> expression);
-        Task<bool> AnyAsync(Expression<Func<Category, bool>> expression);
-        Task AddRangeAsync(IEnumerable<Category> entities);
-        Task<Category> AddAsync(Category entity);
-        void UpdateAsync(Category entity);
-
-        void RemoveAsync(Category entity);
-        void RemoveRangeAsync(IEnumerable<Category> entities);
+        Task<Response<IEnumerable<Category>>> GetAllAsync();
+        Task<Response<Category>> AddAsync(Category entity);
     }
 }

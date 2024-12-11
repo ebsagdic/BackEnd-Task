@@ -1,4 +1,5 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,9 @@ namespace Core.Repositories
     public interface IProductRepository
     {
         Task<Product> GetByIdAsync(int id);
-        IQueryable<Product> GetAll();
-        IQueryable<Product> Where(Expression<Func<Product, bool>> expression);
-        Task<bool> AnyAsync(Expression<Func<Product, bool>> expression);
-        Task AddRangeAsync(IEnumerable<Product> entities);
-        Task AddAsync(Product entity);
-        void Update(Product entity);
-        void Remove(Product entity);
-        void RemoveRange(IEnumerable<Product> entities);
+        Task<Response<IEnumerable<Product>>> GetAllAsync();
+        Task<Response<Product>> AddAsync(Product entity);
+        Response<NoDataDto> Update(Product product);
+        Response<NoDataDto> Remove(int id);
     }
 }

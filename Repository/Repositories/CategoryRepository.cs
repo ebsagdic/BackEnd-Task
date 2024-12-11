@@ -1,4 +1,5 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -15,49 +16,15 @@ namespace Repository.Repositories
             _context = context;
             _dbSet = _context.Set<Category>();
         }
-        public async Task AddAsync(Category entity)
+        public async Task<Response<Category>> AddAsync(Category category)
         {
-            await _dbSet.AddAsync(entity);
+            await _dbSet.AddAsync(category);
+            return Response<Category>.Success(category, 201);
         }
-
-        public async Task AddRangeAsync(IEnumerable<Category> entities)
+        public async Task<Response<IQueryable<Category>>> GetAllAsync()
         {
-            await _dbSet.AddRangeAsync(entities);
-        }
-
-        public async Task<bool> AnyAsync(Expression<Func<Category, bool>> expression)
-        {
-            return await _dbSet.AnyAsync(expression);
-        }
-
-        public IQueryable<Category> GetAll()
-        {
-            return _dbSet.AsNoTracking().AsQueryable();
-        }
-
-        public async Task<Category> GetByIdAsync(int id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
-
-        public void Remove(Category entity)
-        {
-            _dbSet.Remove(entity);
-        }
-
-        public void RemoveRange(IEnumerable<Category> entities)
-        {
-            _dbSet.RemoveRange(entities);
-        }
-
-        public void Update(Category entity)
-        {
-            _dbSet.Update(entity);
-        }
-
-        public IQueryable<Category> Where(Expression<Func<Category, bool>> expression)
-        {
-            return _dbSet.Where(expression).AsQueryable();
+            var categories = _dbSet.AsNoTracking().AsQueryable();
+            return await Task.FromResult(Response<IQueryable<Category>>.Success(categories, 200)); ;
         }
     }
 }

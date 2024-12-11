@@ -1,16 +1,12 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using Core.Repositories;
 using Core.Services;
 using Core.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositories;
 using Service.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -24,28 +20,17 @@ namespace Service
             _repository = repository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<Product> AddAsync(Product entity)
+        public async Task<Response<Product>> AddAsync(Product entity)
         {
             await _repository.AddAsync(entity);
             await _unitOfWork.CommitAsync();
-            return entity;
+            return Response<Product>.Success(entity, 200);
         }
 
-        public async Task AddRangeAsync(IEnumerable<Product> entities)
+        public async Task<Response<IEnumerable<Product>>> GetAllAsync()
         {
-            var dataList = entities.ToList();
-            await _repository.AddRangeAsync(entities);
-            await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<bool> AnyAsync(Expression<Func<Product, bool>> expression)
-        {
-            return await _repository.AnyAsync(expression);
-        }
-
-        public async Task<IEnumerable<Product>> GetAllAsync()
-        {
-            return await _repository.GetAll().ToListAsync();
+            var products = await _repository.GetAllAsync();
+            return Response<IEnumerable<Product>>.Success(products.Data, 200);
         }
 
         public async Task<Product> GetByIdAsync(int id)
@@ -58,24 +43,13 @@ namespace Service
             return product;
         }
 
-        public void Remove(Product entity)
+        public Response<NoDataDto> Remove(int id)
         {
-              _repository.Remove(entity);
+             return  _repository.Remove(id);
         }
-
-        public void RemoveRangeAsync(IEnumerable<Product> entities)
+        public Response<NoDataDto> Update(Product product)
         {
-            _repository.RemoveRange(entities);
-        }
-
-        public void UpdateAsync(Product entity)
-        {
-            _repository.Update(entity);
-        }
-
-        public IQueryable<Product> Where(Expression<Func<Product, bool>> expression)
-        {
-            return _repository.Where(expression);
+            return _repository.Update(product);
         }
     }
 }

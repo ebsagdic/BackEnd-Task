@@ -1,4 +1,5 @@
 ﻿using BackEnd_Task.Models;
+using Core.Dto_s;
 using Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -14,25 +15,15 @@ namespace Repository.Repositories
         {
             _context = context;
         }
-        public async Task AddAsync(Product entity)
+        public async Task<Response<Product>> AddAsync(Product entity)
         {
             await _context.Products.InsertOneAsync(entity);
+            return Response<Product>.Success(entity, 201);
         }
-
-        public async Task AddRangeAsync(IEnumerable<Product> entities)
+        public async Task<Response<IEnumerable<Product>>> GetAllAsync()
         {
-            await _context.Products.InsertManyAsync(entities);
-        }
-
-        public async Task<bool> AnyAsync(Expression<Func<Product, bool>> expression)
-        {
-            var count = await _context.Products.CountDocumentsAsync(expression);
-            return count > 0;
-        }
-
-        public IQueryable<Product> GetAll()
-        {
-            return _context.Products.AsQueryable();
+            var products = _context.Products.AsQueryable(); 
+            return await Task.FromResult(Response<IEnumerable<Product>>.Success(products, 200)); 
         }
 
         public async Task<Product> GetByIdAsync(int id)
@@ -40,25 +31,28 @@ namespace Repository.Repositories
             return await _context.Products.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-        public void Remove(Product entity)
+        public Response<NoDataDto> Remove(int id)
         {
-            _context.Products.DeleteOneAsync(p => p.Id == entity.Id);
+            var deleteResult =  _context.Products.DeleteOne(p => p.Id == id);
+
+            if (deleteResult.DeletedCount > 0)
+            {
+                return Response<NoDataDto>.Success(204); 
+            }
+            return Response<NoDataDto>.Fail("Product not found or could not be deleted.", 404, true); 
         }
 
-        public void RemoveRange(IEnumerable<Product> entities)
+        public Response<NoDataDto> Update(Product product)
         {
-            var ids = entities.Select(e => e.Id).ToList();
-            _context.Products.DeleteManyAsync(p => ids.Contains(p.Id));
-        }
+            var filter = Builders<Product>.Filter.Eq(p => p.Id, product.Id);
 
-        public void Update(Product entity)
-        {
-            _context.Products.ReplaceOneAsync(p => p.Id == entity.Id, entity);
-        }
+            var result = _context.Products.ReplaceOne(filter, product);
 
-        public IQueryable<Product> Where(Expression<Func<Product, bool>> expression)
-        {
-            return _context.Products.AsQueryable().Where(expression);
+            if (result.ModifiedCount > 0)
+            {
+                return Response<NoDataDto>.Success(204); // 204 No Content
+            }
+            return Response<NoDataDto>.Fail("Product not found or could not be updated.", 404, true); // 404 Not Found
         }
     }
 }
