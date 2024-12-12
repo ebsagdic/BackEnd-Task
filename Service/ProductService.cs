@@ -25,6 +25,7 @@ namespace Service
             _cacheService = cacheService;
             _logger = logger;
         }
+
         public async Task<Response<Product>> AddAsync(Product entity)
         {
             await _repository.AddAsync(entity);
