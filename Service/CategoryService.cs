@@ -30,6 +30,7 @@ namespace Service
         {
             var category = await _categoryRepository.GetAllAsync();
             return Response<IEnumerable<Category>>.Success(category.Data, 200);
+
         }
     }
 }
