@@ -1,3 +1,6 @@
+using BackEnd_Task.Models;
+using Core.Repositories;
+using Core.Services;
 using Core.UnitOfWork;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -6,7 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repository;
+using Repository.Repositories;
 using Repository.UnitOfWorks;
+using Service;
 using Service.Validations;
 using System.Text;
 
@@ -17,15 +22,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWorkCategory>();
-
-
-//builder.Services.AddScoped<IProductService, ProductService>();
-//builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -75,6 +80,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -74,15 +74,18 @@ namespace BackEnd_Task.Controllers
         // JWT Token oluşturma
         private string GenerateJwtToken(ApplicationUser user)
         {
-            var claims = new[]
-            {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
-        };
+            var roles = _userManager.GetRolesAsync(user).Result;
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
+            };
+
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -94,61 +97,5 @@ namespace BackEnd_Task.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return NotFound();
-
-            return Ok(user);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = _userManager.Users.ToList();
-            return Ok(users);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] RegisterModel model)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return NotFound();
-
-            user.UserName = model.UserName;
-            user.Email = model.Email;
-            user.Role = model.Role;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            return Ok(new { Message = "Kullanıcı başarıyla güncellendi!" });
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-                return NotFound();
-
-            var result = await _userManager.DeleteAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            return Ok(new { Message = "Kullanıcı başarıyla silindi!" });
-        }
-
     }
 }
