@@ -1,6 +1,6 @@
 -Proje Yapısı-
 Proje N-Layer Architecture prensiplerine uygun bir şekilde tasarlanmıştır.
-SOLID ve OOP prensiplerini maximum seviyede dikkat edilmiş Design Patternlara(Repository Pattern, UnitOfWork Pattern) dikkat edilmiştir.
+SOLID ve OOP prensiplerini maximum seviyede dikkat edilmiş Design Patternlara(Repository Pattern, UnitOfWork Pattern) uygulanmıştır.
 ORM aracı olarak EntityFramework kullanılmıştır.
 Authantication Autharization işlemleri için JWTBearer ve Identity kütüphaneleri beraber kullanılmıştır.
 Hata Yönetimi içi ILogger(Microsoft.Extensions.Logging;)dan faydalanılmış ve Caching için Redis teknolojisi kullanılmıştır.
