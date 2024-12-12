@@ -8,10 +8,22 @@ namespace BackEnd_Task.Controllers
     {
         public IActionResult ActionResultInstance<T>(Response<T> response) where T : class
         {
-            return new ObjectResult(response)
+            if (response.StatusCode == 200)
             {
-                StatusCode = response.StatusCode
-            };
+                return new ObjectResult(response) { StatusCode = response.StatusCode };
+            }
+
+            switch (response.StatusCode)
+            {
+                case 400:
+                    return BadRequest(response);
+                case 404:
+                    return NotFound(response);
+                case 500:
+                    return StatusCode(500, response);
+                default:
+                    return StatusCode(response.StatusCode, response);
+            }
         }
     }
 }

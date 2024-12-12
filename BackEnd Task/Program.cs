@@ -26,6 +26,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICacheService, CacheService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
@@ -59,6 +60,12 @@ builder.Services.AddSingleton<MongoContext>(sp =>
 
 
 builder.Services.AddControllers();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "Prefix_";
+});
 
 builder.Services.AddFluentValidationAutoValidation();
 

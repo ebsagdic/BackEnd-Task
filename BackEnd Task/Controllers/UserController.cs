@@ -16,20 +16,11 @@ namespace BackEnd_Task.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
 
-        public UserController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+
+        public UserController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
         }
         
         [Authorize(Roles = "Admin")]
