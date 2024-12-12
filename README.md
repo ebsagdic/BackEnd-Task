@@ -2,6 +2,7 @@
 Proje N-Layer Architecture prensiplerine uygun bir şekilde tasarlanmıştır.
 SOLID ve OOP prensiplerini maximum seviyede dikkat edilmiş Design Patternlara(Repository Pattern, UnitOfWork Pattern) uygulanmıştır.
 ORM aracı olarak EntityFramework kullanılmıştır.
+Database olarak MsSql ile MongoDB tercih edilerek hibrit bir Sql NoSql yapısı kullanılmıştır.
 Authantication Autharization işlemleri için JWTBearer ve Identity kütüphaneleri beraber kullanılmıştır.
 Hata Yönetimi içi ILogger(Microsoft.Extensions.Logging;)dan faydalanılmış ve Caching için Redis teknolojisi kullanılmıştır.
 Validasyon işlemleri için Fluent Validation işlemleri Service katmanında ayrıca işletilmiştir
